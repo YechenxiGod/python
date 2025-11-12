@@ -1,0 +1,38 @@
+-- 创建数据库
+CREATE DATABASE BookCollectionDB;
+GO
+
+USE BookCollectionDB;
+GO
+
+-- 图书表
+CREATE TABLE Books (
+    BookID INT IDENTITY(1,1) PRIMARY KEY,
+    ISBN NVARCHAR(20) NOT NULL,
+    Title NVARCHAR(200) NOT NULL,
+    Author NVARCHAR(100) NOT NULL,
+    Publisher NVARCHAR(100),
+    Category NVARCHAR(50),
+    Status NVARCHAR(10) CHECK (Status IN ('在架', '借出')) DEFAULT '在架',
+    CreateDate DATETIME DEFAULT GETDATE()
+);
+
+-- 借阅记录表
+CREATE TABLE BorrowRecords (
+    RecordID INT IDENTITY(1,1) PRIMARY KEY,
+    BookID INT NOT NULL,
+    BorrowerName NVARCHAR(50) NOT NULL,
+    BorrowDate DATE NOT NULL,
+    ReturnDate DATE NULL,
+    Notes NVARCHAR(200),
+    FOREIGN KEY (BookID) REFERENCES Books(BookID)
+);
+
+-- 插入测试数据
+INSERT INTO Books (ISBN, Title, Author, Publisher, Category, Status) VALUES
+('9787115546081', '软件工程', '张三', '清华大学出版社', '计算机', '在架'),
+('9787121361972', 'Java编程思想', '李四', '电子工业出版社', '计算机', '借出'),
+('9787544291170', '百年孤独', '加西亚·马尔克斯', '南海出版公司', '文学', '在架');
+
+INSERT INTO BorrowRecords (BookID, BorrowerName, BorrowDate, ReturnDate, Notes) VALUES
+(2, '王五', '2024-01-15', NULL, '课程参考书');
